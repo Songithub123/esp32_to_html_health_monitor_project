@@ -1,8 +1,8 @@
 #include <WiFi.h>
 #include <WebSocketsServer.h>
 
-const char *ssid = "giangSon";
-const char *pass = "124781998";
+const char *ssid = "";
+const char *pass = "";
 
 WebSocketsServer webSocket = WebSocketsServer(1337);
 IPAddress local_IP(192, 168, 0, 107);
