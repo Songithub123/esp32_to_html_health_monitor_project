@@ -5,9 +5,6 @@ const char *ssid = "";
 const char *pass = "";
 
 WebSocketsServer webSocket = WebSocketsServer(1337);
-IPAddress local_IP(192, 168, 0, 107);
-IPAddress gateway(192, 168, 1, 1);
-IPAddress subnet(255, 255, 0, 0);
 
 int heartBeat = 80;
 int oxygenLevel = 56;

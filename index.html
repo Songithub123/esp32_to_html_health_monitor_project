@@ -10,9 +10,10 @@
         var lastHeartbeat;
         var heartbeatInterval;
         var heartbeatTimeout = 500; // 0.5 seconds
+        var ipAddress;
         
         function startWebSocket() {
-            connection = new WebSocket('ws://192.168.0.107:1337/');
+            connection = new WebSocket('ws://' + ipAddress + ':1337/');
             
             connection.onopen = function () {
                 console.log('Connected!');
@@ -66,7 +67,9 @@
                 document.getElementById("connection_status").textContent = 'ESP32 is disconnected';
             }
         }
-        
+        function connect() {
+            ipAddress = document.getElementById("ipAddress").value;
+        }
         startWebSocket();
     </script>
 </head>
@@ -77,6 +80,10 @@
         <h2><p1>Oxigen level: </p1><p1 id="Oxigen_level_data" >oxigen level data</p1><p1>%</p1></h2>
         <h2><p1>Body temperature: </p1><p1 id="Body_temperature" >body temperature</p1><p1>'C</p1></h2>
         <h2 id="connection_status"></h2>
+    </div>
+    <div>
+        <input type="text" id="ipAddress" placeholder="Enter ESP32 IP Address">
+        <button onclick="connect()">Connect</button>
     </div>
 </body>
 </html>
