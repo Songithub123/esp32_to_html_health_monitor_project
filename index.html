@@ -1,103 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Patient monitor</title>
     <style>
-        p{
-            font-size: 25px;
-        }
+      p {
+        font-size: 25px;
+      }
     </style>
     <script>
-        var connection;
-        var pingInterval;
-        var lastHeartbeat;
-        var heartbeatInterval;
-        var heartbeatTimeout = 500; // 0.5 seconds
-        var ipAddress;
-        
-        function startWebSocket() {
-            connection = new WebSocket('ws://' + ipAddress + ':1337/');
-            
-            connection.onopen = function () {
-                console.log('Connected!');
-                pingInterval = setInterval(function() {
-                    if (connection.readyState === connection.OPEN) {
-                        connection.send('ping');
-                    } else {
-                        clearInterval(pingInterval);
-                        console.log('Socket is closed. Reconnect will be attempted in 0.5 second.');
-                        setTimeout(function() {
-                            startWebSocket();
-                        }, 500);
-                    }
-                }, 1000); // Send ping every second
+      var connection;
+      var pingInterval;
+      var lastHeartbeat;
+      var heartbeatInterval;
+      var heartbeatTimeout = 500; // 0.5 seconds
+      var ipAddress;
 
-                // Start the heartbeat interval
-                heartbeatInterval = setInterval(checkHeartbeat, heartbeatTimeout);
-            };
-            
-            connection.onerror = function (error) {
-                console.log('WebSocket Error ', error);
-            };
-            
-            connection.onmessage = function (e) {
-                console.log('Server: ', e.data);
-                var data = JSON.parse(e.data);
-                document.getElementById("connection_status").textContent = 'ESP32 is connected';
-                document.getElementById("connection_status").style.color = 'black';
-                document.getElementById("heart_beat_data").textContent = data.heartBeat;
-                document.getElementById("Oxigen_level_data").textContent = data.oxygenLevel;
-                document.getElementById("Body_temperature").textContent = data.bodyTemperature;
-                document.getElementById("Latitude").textContent = data.Latitude;
-                document.getElementById("Longitude").textContent = data.Longitude;
+      function startWebSocket() {
+        connection = new WebSocket("ws://" + ipAddress + ":1337/");
 
-                // Update the last heartbeat time whenever a message is received
-                lastHeartbeat = Date.now();
-            };
-            
-            connection.onclose = function(e) {
-                console.log('Socket is closed. Reconnect will be attempted in 0.5 second.', e.reason);
-                document.getElementById("connection_status").textContent = 'ESP32 is disconnected';
-                document.getElementById("connection_status").style.color = 'red';
-                setTimeout(function() {
-                    startWebSocket();
-                }, 500);
-
-                // Clear the heartbeat interval
-                clearInterval(heartbeatInterval);
-            };
-        }
-
-        function checkHeartbeat() {
-            if (Date.now() - lastHeartbeat > heartbeatTimeout) {
-                // If no messages have been received for 10 seconds, assume the ESP32 is disconnected
-                document.getElementById("connection_status").textContent = 'ESP32 is disconnected';
-                document.getElementById("connection_status").style.color = 'red';
+        connection.onopen = function () {
+          console.log("Connected!");
+          pingInterval = setInterval(function () {
+            if (connection.readyState === connection.OPEN) {
+              connection.send("ping");
+            } else {
+              clearInterval(pingInterval);
+              console.log(
+                "Socket is closed. Reconnect will be attempted in 0.5 second."
+              );
+              setTimeout(function () {
+                startWebSocket();
+              }, 500);
             }
+          }, 1000); // Send ping every second
+
+          // Start the heartbeat interval
+          heartbeatInterval = setInterval(checkHeartbeat, heartbeatTimeout);
+        };
+
+        connection.onerror = function (error) {
+          console.log("WebSocket Error ", error);
+        };
+
+        connection.onmessage = function (e) {
+          console.log("Server: ", e.data);
+          var data = JSON.parse(e.data);
+          document.getElementById("connection_status").textContent =
+            "ESP32 is connected";
+          document.getElementById("connection_status").style.color = "black";
+          document.getElementById("heart_beat_data").textContent =
+            data.heartBeat;
+          document.getElementById("Oxigen_level_data").textContent =
+            data.oxygenLevel;
+          document.getElementById("Body_temperature").textContent =
+            data.bodyTemperature;
+          document.getElementById("Latitude").textContent = data.Latitude;
+          document.getElementById("Longitude").textContent = data.Longitude;
+
+          // Update the last heartbeat time whenever a message is received
+          lastHeartbeat = Date.now();
+        };
+
+        connection.onclose = function (e) {
+          console.log(
+            "Socket is closed. Reconnect will be attempted in 0.5 second.",
+            e.reason
+          );
+          document.getElementById("connection_status").textContent =
+            "ESP32 is disconnected";
+          document.getElementById("connection_status").style.color = "red";
+          setTimeout(function () {
+            startWebSocket();
+          }, 500);
+
+          // Clear the heartbeat interval
+          clearInterval(heartbeatInterval);
+        };
+      }
+
+      function checkHeartbeat() {
+        if (Date.now() - lastHeartbeat > heartbeatTimeout) {
+          // If no messages have been received for 10 seconds, assume the ESP32 is disconnected
+          document.getElementById("connection_status").textContent =
+            "ESP32 is disconnected";
+          document.getElementById("connection_status").style.color = "red";
         }
-        function connect() {
-            ipAddress = document.getElementById("ipAddress").value;
-        }
-        startWebSocket();
+      }
+      function connect() {
+        ipAddress = document.getElementById("ipAddress").value;
+      }
+      startWebSocket();
+      function copyToClipboard() {
+        var gpsValue = document.getElementById("gps value").textContent.trim();
+        var tempInput = document.createElement("input");
+        document.body.appendChild(tempInput);
+        tempInput.value = gpsValue;
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        alert("Copied GPS value to clipboard");
+      }
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Patient 1</h1>
     <div>
-        <h2><p1>Heart beat: </p1><p1 id="heart_beat_data">heart beat data</p1><p1>bpm</p1></h2>
-        <h2><p1>Oxigen level: </p1><p1 id="Oxigen_level_data" >oxigen level data</p1><p1>%</p1></h2>
-        <h2><p1>Body temperature: </p1><p1 id="Body_temperature" >body temperature</p1><p1>'C</p1></h2>
-        <h2 id="connection_status"></h2>
+      <h2>
+        <p1>Heart beat: </p1><p1 id="heart_beat_data">heart beat data</p1
+        ><p1>bpm</p1>
+      </h2>
+      <h2>
+        <p1>Oxigen level: </p1><p1 id="Oxigen_level_data">oxigen level data</p1
+        ><p1>%</p1>
+      </h2>
+      <h2>
+        <p1>Body temperature: </p1
+        ><p1 id="Body_temperature">body temperature</p1><p1>'C</p1>
+      </h2>
+      <h2 id="connection_status"></h2>
     </div>
     <div>
-        <input type="text" id="ipAddress" placeholder="Enter ESP32 IP Address">
-        <button onclick="connect()">Connect</button>
+      <input type="text" id="ipAddress" placeholder="Enter ESP32 IP Address" />
+      <button onclick="connect()">Connect</button>
     </div>
     <div id="GPS location">
-        <p><p1>Latitude: </p1><p2 id="Latitude">Latitude value</p2></p>
-        <p><p1>Longitude: </p1><p2 id="Longitude">Longitude value</p2></p>
+      <p><p1>Latitude - Latitude: </p1></p>
+      <p id="gps value">
+        <p2 id="Latitude">Latitude value</p2><p3>,</p3
+        ><p4 id="Longitude">Longitude value</p4>
+      </p>
+      <button onclick="copyToClipboard()">Copy GPS Value</button>
+      <p><a href="https://www.google.com/maps">Go to Google Maps</a></p>
     </div>
-</body>
+  </body>
 </html>
