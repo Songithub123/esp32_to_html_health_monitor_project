@@ -9,6 +9,12 @@ WebSocketsServer webSocket = WebSocketsServer(1337);
 int heartBeat = 80;
 int oxygenLevel = 56;
 int bodyTemperature = 31;
+
+int check_wifi_interval=0;
+int sensor_interval=0;
+
+float latitude=0;
+float longitude=0;
 float e;
 
 void setup() {
@@ -16,6 +22,7 @@ void setup() {
   WiFi.begin(ssid, pass);
   while (WiFi.status() != WL_CONNECTED) {
     WiFi.begin(ssid, pass);
+    Serial.println("Esp32  is connecting....");  
     delay(500);
   }
   if (WiFi.status() == WL_CONNECTED) {
@@ -27,16 +34,32 @@ void setup() {
   webSocket.onEvent(webSocketEvent);
 }
 
+
 void loop() {
-  e = (float)random(-1, 1);
-  heartBeat += e;
-  oxygenLevel += e;
-  bodyTemperature+= e;
-  webSocket.loop();
-  // Assuming you have variables heartBeat, oxygenLevel, and bodyTemperature
-  String data = "{ \"heartBeat\": " + String(heartBeat) + ", \"oxygenLevel\": " + String(oxygenLevel) + ", \"bodyTemperature\": " + String(bodyTemperature) + " }";
-  webSocket.broadcastTXT(data);
-  delay(50);
+  if (millis() - check_wifi_interval > 500){
+    while (WiFi.status() != WL_CONNECTED) {
+    WiFi.begin(ssid, pass);
+    Serial.println("Esp32  is connecting....");  
+    check_wifi_interval = millis();
+  }
+  }
+  if (millis() - sensor_interval > 50){
+    e = (float)random(-1, 1);
+    latitude = (float)random(-20, 20);
+    longitude = (float)random(-20, 20);
+    heartBeat += e;
+    oxygenLevel += e;
+    bodyTemperature+= e;
+    webSocket.loop();
+    // Assuming you have variables heartBeat, oxygenLevel, and bodyTemperature
+    String data = "{ \"heartBeat\": " + String(heartBeat) + ", 
+                    \"oxygenLevel\": " + String(oxygenLevel) + ", 
+                    \"bodyTemperature\": " + String(bodyTemperature) + ",
+                    \"Latitude\":" + String(latitude) + ",
+                    \"Longitude\":" + String(longitude) + ", }";
+    webSocket.broadcastTXT(data);
+    sensor_interval = millis();
+  }
 }
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
