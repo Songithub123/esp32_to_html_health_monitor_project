@@ -10,8 +10,8 @@ int heartBeat = 80;
 int oxygenLevel = 56;
 int bodyTemperature = 31;
 
-int check_wifi_interval=0;
-int sensor_interval=0;
+unsigned long check_wifi_interval=0;
+unsigned long sensor_interval=0;
 
 float latitude=0;
 float longitude=0;
@@ -35,13 +35,15 @@ void setup() {
 }
 
 
+// Assuming the variables are declared and initialized properly
 void loop() {
   if (millis() - check_wifi_interval > 500){
-    while (WiFi.status() != WL_CONNECTED) {
-    WiFi.begin(ssid, pass);
-    Serial.println("Esp32  is connecting....");  
+    unsigned long startAttemptTime = millis();
+    while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 5000) { // 5 seconds timeout
+      WiFi.begin(ssid, pass);
+      Serial.println("Esp32  is connecting....");  
+    }
     check_wifi_interval = millis();
-  }
   }
   if (millis() - sensor_interval > 50){
     e = (float)random(-1, 1);
@@ -51,16 +53,17 @@ void loop() {
     oxygenLevel += e;
     bodyTemperature+= e;
     webSocket.loop();
-    // Assuming you have variables heartBeat, oxygenLevel, and bodyTemperature
-    String data = "{ \"heartBeat\": " + String(heartBeat) + ", 
-                    \"oxygenLevel\": " + String(oxygenLevel) + ", 
-                    \"bodyTemperature\": " + String(bodyTemperature) + ",
-                    \"Latitude\":" + String(latitude) + ",
-                    \"Longitude\":" + String(longitude) + ", }";
+    String data = "{ \"heartBeat\": " + String(heartBeat) + ","
+                  " \"oxygenLevel\": " + String(oxygenLevel) + ","
+                  " \"bodyTemperature\": " + String(bodyTemperature) + ","
+                  " \"Latitude\":" + String(latitude) + ","
+                  " \"Longitude\":" + String(longitude) + " }";
+
     webSocket.broadcastTXT(data);
     sensor_interval = millis();
   }
 }
+
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   switch(type) {
