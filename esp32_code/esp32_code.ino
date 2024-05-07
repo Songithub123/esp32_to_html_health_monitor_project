@@ -9,6 +9,7 @@ WebSocketsServer webSocket = WebSocketsServer(1337);
 int heartBeat = 80;
 int oxygenLevel = 56;
 int bodyTemperature = 31;
+long irValue=0;
 
 unsigned long check_wifi_interval=0;
 unsigned long sensor_interval=0;
@@ -57,7 +58,8 @@ void loop() {
                   " \"oxygenLevel\": " + String(oxygenLevel) + ","
                   " \"bodyTemperature\": " + String(bodyTemperature) + ","
                   " \"Latitude\":" + String(latitude) + ","
-                  " \"Longitude\":" + String(longitude) + " }";
+                  " \"Longitude\":" + String(longitude) + ", "
+                  " \"IR\":" + String(irValue) + " }";
 
     webSocket.broadcastTXT(data);
     sensor_interval = millis();

@@ -16,6 +16,7 @@
       var heartbeatInterval;
       var heartbeatTimeout = 500; // 0.5 seconds
       var ipAddress;
+      var IR_of_heartbeat = 0;
 
       function startWebSocket() {
         connection = new WebSocket("ws://" + ipAddress + ":1337/");
@@ -58,7 +59,7 @@
             data.bodyTemperature;
           document.getElementById("Latitude").textContent = data.Latitude;
           document.getElementById("Longitude").textContent = data.Longitude;
-
+          IR_of_heartbeat = data.IR;
           // Update the last heartbeat time whenever a message is received
           lastHeartbeat = Date.now();
         };
@@ -88,6 +89,22 @@
           document.getElementById("connection_status").style.color = "red";
         }
       }
+      function check_heartbeat_sensor() {
+        if (IR_of_heartbeat_sensor < 5000) {
+          document.getElementById("Finger_on_heartbeatsensor").textContent =
+            "Sensor is not reading heartbeat";
+          document.getElementById("Finger_on_heartbeatsensor").style.color =
+            "red";
+        } else if (IR_of_heartbeat_sensor > 5000) {
+          document.getElementById("Finger_on_heartbeatsensor").textContent =
+            "Sensor is reading heartbeat";
+          document.getElementById("Finger_on_heartbeatsensor").style.color =
+            "black";
+        }
+      }
+      // Call this function every 0.5 seconds
+      setInterval(check_heartbeat_sensor, 500);
+
       function connect() {
         ipAddress = document.getElementById("ipAddress").value;
       }
@@ -109,7 +126,11 @@
     <div>
       <h2>
         <p1>Heart beat: </p1><p1 id="heart_beat_data">heart beat data</p1
-        ><p1>bpm</p1>
+        ><p1> bpm</p1>
+        <br />
+        <p2 id="Finger_on_heartbeatsensor"
+          ></p2
+        >
       </h2>
       <h2>
         <p1>Oxigen level: </p1><p1 id="Oxigen_level_data">oxigen level data</p1
@@ -134,7 +155,11 @@
         </p5>
         <button onclick="copyToClipboard()">Copy</button>
       </p>
-      <p><a href="https://www.google.com/maps">Go to Google Maps</a></p>
+      <p>
+        <a href="https://www.google.com/maps" target="_blank"
+          >Go to Google Maps</a
+        >
+      </p>
     </div>
   </body>
 </html>
