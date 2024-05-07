@@ -16,7 +16,7 @@
       var heartbeatInterval;
       var heartbeatTimeout = 500; // 0.5 seconds
       var ipAddress;
-      var IR_of_heartbeat = 0;
+      var IR_of_heartbeat_sensor = 0;
 
       function startWebSocket() {
         connection = new WebSocket("ws://" + ipAddress + ":1337/");
@@ -59,7 +59,7 @@
             data.bodyTemperature;
           document.getElementById("Latitude").textContent = data.Latitude;
           document.getElementById("Longitude").textContent = data.Longitude;
-          IR_of_heartbeat = data.IR;
+          IR_of_heartbeat_sensor = data.IR;
           // Update the last heartbeat time whenever a message is received
           lastHeartbeat = Date.now();
         };
@@ -91,19 +91,22 @@
       }
       function check_heartbeat_sensor() {
         if (IR_of_heartbeat_sensor < 5000) {
-          document.getElementById("Finger_on_heartbeatsensor").textContent =
-            "Sensor is not reading heartbeat";
           document.getElementById("Finger_on_heartbeatsensor").style.color =
             "red";
+          document.getElementById(
+            "Finger_on_heartbeatsensor"
+          ).children[0].textContent = "Sensor is not reading heartbeat";
         } else if (IR_of_heartbeat_sensor > 5000) {
-          document.getElementById("Finger_on_heartbeatsensor").textContent =
-            "Sensor is reading heartbeat";
           document.getElementById("Finger_on_heartbeatsensor").style.color =
             "black";
+          document.getElementById(
+            "Finger_on_heartbeatsensor"
+          ).children[0].textContent = "Sensor is not reading heartbeat";
         }
       }
       // Call this function every 0.5 seconds
       setInterval(check_heartbeat_sensor, 500);
+      console.log("IR Value: ", IR_of_heartbeat_sensor);
 
       function connect() {
         ipAddress = document.getElementById("ipAddress").value;
@@ -128,9 +131,7 @@
         <p1>Heart beat: </p1><p1 id="heart_beat_data">heart beat data</p1
         ><p1> bpm</p1>
         <br />
-        <p2 id="Finger_on_heartbeatsensor"
-          ></p2
-        >
+        <p2 id="Finger_on_heartbeatsensor"><i></i></p2>
       </h2>
       <h2>
         <p1>Oxigen level: </p1><p1 id="Oxigen_level_data">oxigen level data</p1
