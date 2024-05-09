@@ -17,9 +17,10 @@ const byte RATE_SIZE = 4; //Increase this for more averaging. 4 is good.
 byte rates[RATE_SIZE]; //Array of heart rates
 byte rateSpot = 0;
 long lastBeat = 0; //Time at which the last beat occurred
-float beatsPerMinute;
-int beatAvg;
+float beatsPerMinute=0;
+int beatAvg=0;
 long irValue=0;
+float oxygenLevel=0;
 
 const char *ssid = "";
 const char *pass = "";
@@ -31,7 +32,7 @@ unsigned long sensor_interval=0;
 
 float latitude=0;
 float longitude=0;
-float e;
+float e=0;
 
 void setup() {
   Serial.begin(115200);
@@ -124,9 +125,11 @@ void loop() {
     /*e = (float)random(-1, 1);
     latitude = (float)random(-20, 20);
     longitude = (float)random(-20, 20);
-    heartBeat += e;
+    beatsPerMinute += e;
     oxygenLevel += e;
-    bodyTemperature+= e;*/
+    tempC+= e;*/
+    read_ds18b20();
+    read_max30102();
     webSocket.loop();
     String data = "{ \"heartBeat\": " + String(beatsPerMinute) + ","
                   " \"oxygenLevel\": " + String(oxygenLevel) + ","
