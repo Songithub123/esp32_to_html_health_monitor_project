@@ -90,18 +90,18 @@
         }
       }
       function check_heartbeat_sensor() {
-        if (IR_of_heartbeat_sensor < 5000) {
+        if (IR_of_heartbeat_sensor == 0) {
           document.getElementById("Finger_on_heartbeatsensor").style.color =
             "red";
           document.getElementById(
             "Finger_on_heartbeatsensor"
           ).children[0].textContent = "Sensor is not reading heartbeat";
-        } else if (IR_of_heartbeat_sensor > 5000) {
+        } else if (IR_of_heartbeat_sensor == 1) {
           document.getElementById("Finger_on_heartbeatsensor").style.color =
             "black";
           document.getElementById(
             "Finger_on_heartbeatsensor"
-          ).children[0].textContent = "Sensor is not reading heartbeat";
+          ).children[0].textContent = "Sensor is reading heartbeat";
         }
       }
       // Call this function every 0.5 seconds
