@@ -5,22 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Patient monitor</title>
     <style>
+      div {
+        text-align: center;
+      }
       p {
         font-size: 20px;
       }
-      #HeartbeatBlock{
-        background-color: #FFC0CB;
+      #HeartbeatBlock {
+        background-color: #ffc0cb;
       }
-      #OxigenBlock{
+      #OxigenBlock {
         background-color: #87ea98;
       }
-      #TemperatureBlock{
-        height: 30px;
+      #TemperatureBlock {
+        height: 40px;
         color: white;
         background: linear-gradient(to right, #141fb6, #ff3300);
       }
-      #GPS_location{
-        background-color: #87CEEB;
+      #GPS_location {
+        background-color: #87ceeb;
       }
     </style>
     <script>
@@ -155,7 +158,6 @@
         <p1>Body temperature: </p1
         ><p1 id="Body_temperature">body temperature</p1><p1>'C</p1>
       </h2>
-      <h2 id="connection_status"></h2>
     </div>
     <div id="connect_address">
       <input type="text" id="ipAddress" placeholder="Enter ESP32 IP Address" />
@@ -175,6 +177,9 @@
           >Go to Google Maps</a
         >
       </p>
+    </div>
+    <div>
+      <h2 id="connection_status"></h2>
     </div>
   </body>
 </html>
