@@ -5,6 +5,8 @@
 #include "heartRate.h"
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <TinyGPS++.h>
+#include <HardwareSerial.h>
 
 MAX30105 particleSensor;
 
@@ -30,17 +32,18 @@ float tempC;
 
 
 
-const char *ssid = "SonHOTSPOT";
-const char *pass = "136582003154891975";
+const char *ssid = "";
+const char *pass = "";
 WebSocketsServer webSocket = WebSocketsServer(1337);
 unsigned long check_wifi_interval = 0;
 unsigned long sensor_interval = 0;
 
 
 
-
-float latitude = 0;
-float longitude = 0;
+float latitude, longitude;
+String lat_str, lng_str;
+TinyGPSPlus gps;
+HardwareSerial SerialGPS(1);
 float e = 0;
 
 
@@ -48,6 +51,7 @@ float e = 0;
 void setup() {
   Serial.begin(115200);
   Serial.println("Initializing...");
+  SerialGPS.begin(115200, SERIAL_8N1, 16, 17);
   WiFi.begin(ssid, pass);
   while (WiFi.status() != WL_CONNECTED) {
     WiFi.begin(ssid, pass);
@@ -130,12 +134,30 @@ void read_ds18b20() {
 }
 
 
-
+void read_neo_6m(){
+  if (gps.encode(SerialGPS.read())) {
+    if (gps.location.isValid()){
+      latitude = gps.location.lat();
+      lat_str = String(latitude , 6);
+      longitude = gps.location.lng();
+      lng_str = String(longitude , 6);
+      Serial.print("Latitude = ");
+      Serial.println(lat_str);
+      Serial.print("Longitude = ");
+      Serial.println(lng_str);
+      delay(50);
+    }
+  } else {
+    Serial.println("NO GPS");
+  }
+}
 
 void loop() {
   read_max30102();
   delay(1);
   read_ds18b20();
+  delay(1);
+  read_neo_6m();
   if (millis() - check_wifi_interval > 500) {
     unsigned long startAttemptTime = millis();
     while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 5000) {  // 5 seconds timeout
@@ -154,14 +176,14 @@ void loop() {
 
     webSocket.loop();
     String data = "{ \"heartBeat\": " + String(beatsPerMinute) + ","
-                                                                 " \"oxygenLevel\": "
-                  + String(oxygenLevel) + ","
+                  //                          \"oxygenLevel\": "
+                  //+ String(oxygenLevel) + ","
                                           " \"bodyTemperature\": "
                   + String(tempC) + ","
                                     " \"Latitude\":"
-                  + String(latitude) + ","
+                  + String(lat_str) + ","
                                        " \"Longitude\":"
-                  + String(longitude) + ", "
+                  + String(lng_str) + ", "
                                         " \"IR\":"
                   + String(irBool) + " }";
 
