@@ -8,6 +8,18 @@
       p {
         font-size: 20px;
       }
+      #HeartbeatBlock{
+        background-color: #FFC0CB;
+      }
+      #OxigenBlock{
+        background-color: #87ea98;
+      }
+      #TemperatureBlock{
+        background: linear-gradient(to right, #ad96f2, #ff3300);
+      }
+      #GPS_location{
+        background-color: #87CEEB;
+      }
     </style>
     <script>
       var connection;
@@ -127,27 +139,27 @@
   <body>
     <h1>Patient 1</h1>
     <div>
-      <h2>
+      <h2 id="HeartbeatBlock">
         <p1>Heart beat: </p1><p1 id="heart_beat_data">heart beat data</p1
         ><p1> bpm</p1>
         <br />
         <p2 id="Finger_on_heartbeatsensor"><i></i></p2>
       </h2>
-      <h2>
+      <h2 id="OxigenBlock">
         <p1>Oxigen level: </p1><p1 id="Oxigen_level_data">oxigen level data</p1
         ><p1>%</p1>
       </h2>
-      <h2>
+      <h2 id="TemperatureBlock">
         <p1>Body temperature: </p1
         ><p1 id="Body_temperature">body temperature</p1><p1>'C</p1>
       </h2>
       <h2 id="connection_status"></h2>
     </div>
-    <div>
+    <div id="connect_address">
       <input type="text" id="ipAddress" placeholder="Enter ESP32 IP Address" />
       <button onclick="connect()">Connect</button>
     </div>
-    <div id="GPS location">
+    <div id="GPS_location">
       <p>
         <p1>Latitude - Longitude: </p1>
         <p5 id="gps value">
