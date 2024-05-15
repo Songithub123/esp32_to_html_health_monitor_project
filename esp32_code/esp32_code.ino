@@ -40,8 +40,8 @@ unsigned long sensor_interval = 0;
 
 
 
-float latitude, longitude;
-String lat_str, lng_str;
+float latitude = 0; 
+float longitude = 0;
 TinyGPSPlus gps;
 HardwareSerial SerialGPS(1);
 float e = 0;
@@ -138,13 +138,11 @@ void read_neo_6m(){
   if (gps.encode(SerialGPS.read())) {
     if (gps.location.isValid()){
       latitude = gps.location.lat();
-      lat_str = String(latitude , 6);
       longitude = gps.location.lng();
-      lng_str = String(longitude , 6);
       Serial.print("Latitude = ");
-      Serial.println(lat_str);
+      Serial.println(latitude);
       Serial.print("Longitude = ");
-      Serial.println(lng_str);
+      Serial.println(longitude);
       delay(50);
     }
   } else {
@@ -181,9 +179,9 @@ void loop() {
                                           " \"bodyTemperature\": "
                   + String(tempC) + ","
                                     " \"Latitude\":"
-                  + String(lat_str) + ","
+                  + String(latitude) + ","
                                        " \"Longitude\":"
-                  + String(lng_str) + ", "
+                  + String(longitude) + ", "
                                         " \"IR\":"
                   + String(irBool) + " }";
 
