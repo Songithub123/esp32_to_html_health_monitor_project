@@ -12,15 +12,12 @@
         font-size: 20px;
       }
       #HeartbeatBlock {
-        background-color: #ffc0cb;
-      }
-      #OxigenBlock {
-        background-color: #87ea98;
+        background: linear-gradient(to top, #87ea98, #ffc0cb);
       }
       #TemperatureBlock {
         height: 40px;
         color: white;
-        background: linear-gradient(to right, #141fb6, #ff3300);
+        background: linear-gradient(to right, blue, red);
       }
       #GPS_location {
         background-color: #87ceeb;
@@ -55,7 +52,7 @@
           }, 1000); // Send ping every second
 
           // Start the heartbeat interval
-          heartbeatInterval = setInterval(checkHeartbeat, heartbeatTimeout);
+          heartbeatInterval = setInterval(check_esp32_connection, heartbeatTimeout);
         };
 
         connection.onerror = function (error) {
@@ -70,8 +67,6 @@
           document.getElementById("connection_status").style.color = "black";
           document.getElementById("heart_beat_data").textContent =
             data.heartBeat;
-          document.getElementById("Oxigen_level_data").textContent =
-            data.oxygenLevel;
           document.getElementById("Body_temperature").textContent =
             data.bodyTemperature;
           document.getElementById("Latitude").textContent = data.Latitude;
@@ -97,8 +92,7 @@
           clearInterval(heartbeatInterval);
         };
       }
-
-      function checkHeartbeat() {
+      function check_esp32_connection() {
         if (Date.now() - lastHeartbeat > heartbeatTimeout) {
           // If no messages have been received for 10 seconds, assume the ESP32 is disconnected
           document.getElementById("connection_status").textContent =
@@ -150,13 +144,9 @@
         <br />
         <p2 id="Finger_on_heartbeatsensor"><i></i></p2>
       </h2>
-      <h2 id="OxigenBlock">
-        <p1>Oxigen level: </p1><p1 id="Oxigen_level_data">oxigen level data</p1
-        ><p1>%</p1>
-      </h2>
       <h2 id="TemperatureBlock">
         <p1>Body temperature: </p1
-        ><p1 id="Body_temperature">body temperature</p1><p1>'C</p1>
+        ><p1 id="Body_temperature">body temperature</p1><p1> 'C</p1>
       </h2>
     </div>
     <div id="connect_address">
