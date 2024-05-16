@@ -32,8 +32,8 @@ float tempC;
 
 
 
-const char *ssid = "";
-const char *pass = "";
+const char *ssid = "SonHOTSPOT";
+const char *pass = "136582003154891975";
 WebSocketsServer webSocket = WebSocketsServer(1337);
 unsigned long check_wifi_interval = 0;
 unsigned long sensor_interval = 0;
